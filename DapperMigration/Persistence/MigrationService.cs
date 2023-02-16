@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using MySqlConnector;
 
 namespace DapperMigration.Persistence
@@ -17,14 +18,14 @@ namespace DapperMigration.Persistence
         {
             var serverConnectionString = GetServerConnectionString();
 
-            var connection = new MySqlConnection( serverConnectionString );
-            connection.Open();
+            using IDbConnection connection = new MySqlConnection( serverConnectionString );
             if (DatabaseExists(connection)) return;
 
             connection.Execute("CREATE DATABASE " + _dbName, new
             {
                 dbname = _dbName
             });
+            connection.Open();
             connection.ChangeDatabase(_dbName);
             connection.Execute(@"CREATE TABLE `webserver` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -35,7 +36,7 @@ namespace DapperMigration.Persistence
 UNIQUE INDEX `name_UNIQUE` (`name` ASC));");
         }
 
-        private bool DatabaseExists(MySqlConnection connection)
+        private bool DatabaseExists(IDbConnection connection)
         {
             var result = connection.ExecuteScalar<string>("SHOW DATABASES LIKE @dbname", new
                 { dbname = _dbName });

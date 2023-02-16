@@ -1,5 +1,7 @@
+using System.Data;
 using DapperMigration.BackgroundService;
 using DapperMigration.Persistence;
+using DapperMigration.Persistence.Services;
 using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,10 +13,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<MySqlConnection>(_ => 
+builder.Services.AddTransient<IDbConnection>(_ => 
     new MySqlConnection(axisConnectionString));
 builder.Services.AddTransient<MigrationService>(_ => 
     new MigrationService(axisConnectionString));
+builder.Services.AddTransient<IWebServerRepository, WebServerRepository>();
 builder.Services.AddHostedService<MigrationRunner>();
 
 var app = builder.Build();
