@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DapperMigration.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
@@ -16,9 +17,9 @@ namespace DapperMigration.Controllers
         }
 
         [HttpPost]
-        public string Create()
+        public CreateWebServerResponse Create()
         {
-            return string.Empty;
+            return new CreateWebServerResponse();
         }
     }
 }

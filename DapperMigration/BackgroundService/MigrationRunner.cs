@@ -2,11 +2,11 @@
 
 namespace DapperMigration.BackgroundService
 {
-    public class SeedDatabase : IHostedService
+    public class MigrationRunner : IHostedService
     {
         private readonly MigrationService _migrationService;
 
-        public SeedDatabase(MigrationService migrationService)
+        public MigrationRunner(MigrationService migrationService)
         {
             _migrationService = migrationService;
         }

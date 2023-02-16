@@ -5,26 +5,28 @@ namespace DapperMigration.Persistence
 {
     public class MigrationService
     {
-        private readonly string _dbName; 
-        private readonly MySqlConnection _connection;
+        private readonly string _connectionString;
+        private string _dbName = string.Empty;
 
-        public MigrationService(MySqlConnection connection)
+        public MigrationService(string connectionString)
         {
-            _connection = connection;
-            _dbName = "axis_database";
+            _connectionString = connectionString;
         }
 
         public void SeedDatabase()
         {
-            _connection.Open();
-            if (DatabaseExists()) return;
+            var serverConnectionString = GetServerConnectionString();
 
-            _connection.Execute("CREATE DATABASE " + _dbName, new
+            var connection = new MySqlConnection( serverConnectionString );
+            connection.Open();
+            if (DatabaseExists(connection)) return;
+
+            connection.Execute("CREATE DATABASE " + _dbName, new
             {
                 dbname = _dbName
             });
-            _connection.ChangeDatabase(_dbName);
-            _connection.Execute(@"CREATE TABLE `webserver` (
+            connection.ChangeDatabase(_dbName);
+            connection.Execute(@"CREATE TABLE `webserver` (
   `id` INT NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `arn` VARCHAR(255) NULL,
@@ -32,11 +34,30 @@ namespace DapperMigration.Persistence
   UNIQUE INDEX `id_UNIQUE` (`id` ASC));");
         }
 
-        private bool DatabaseExists()
+        private bool DatabaseExists(MySqlConnection connection)
         {
-            var result = _connection.ExecuteScalar<string>("SHOW DATABASES LIKE @dbname", new
+            var result = connection.ExecuteScalar<string>("SHOW DATABASES LIKE @dbname", new
                 { dbname = _dbName });
             return !string.IsNullOrEmpty(result);
+        }
+
+        private string GetServerConnectionString()
+        {
+            var serverConnectionString = string.Empty;
+            var connectionStringOptions = _connectionString.Split(';');
+            var dbOptionPrefix = "database=";
+            for (int i = 0; i < connectionStringOptions.Length; i++)
+            {
+                if (connectionStringOptions[i].IndexOf(dbOptionPrefix, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    serverConnectionString += connectionStringOptions[i] + ";";
+                }
+                else
+                {
+                    _dbName = connectionStringOptions[i].Substring(dbOptionPrefix.Length);
+                }
+            }
+            return serverConnectionString;
         }
     }
 }

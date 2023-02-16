@@ -3,6 +3,7 @@ using DapperMigration.Persistence;
 using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
+var axisConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add services to the container.
 
@@ -11,9 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<MySqlConnection>(_ => 
-    new MySqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddTransient<MigrationService>();
-builder.Services.AddHostedService<SeedDatabase>();
+    new MySqlConnection(axisConnectionString));
+builder.Services.AddTransient<MigrationService>(_ => 
+    new MigrationService(axisConnectionString));
+builder.Services.AddHostedService<MigrationRunner>();
 
 var app = builder.Build();
 
