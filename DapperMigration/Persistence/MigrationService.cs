@@ -27,11 +27,12 @@ namespace DapperMigration.Persistence
             });
             connection.ChangeDatabase(_dbName);
             connection.Execute(@"CREATE TABLE `webserver` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `arn` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC));");
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+UNIQUE INDEX `name_UNIQUE` (`name` ASC));");
         }
 
         private bool DatabaseExists(MySqlConnection connection)

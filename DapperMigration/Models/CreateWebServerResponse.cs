@@ -3,16 +3,17 @@
     /// <summary>
     /// Create a web server response
     /// </summary>
-    public class CreateWebServerResponse
+    public class WebServerModel
     {
         /// <summary>
         /// EC2 Instance ID
         /// </summary>
-        public string? Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// EC2 Instance Name
         /// </summary>
-        public string? Name { get; set; }
+        public string Name { get; set; }
+        public string? Arn { get; set; }
     }
 }
