@@ -22,7 +22,6 @@ namespace DapperMigration.Persistence.Services
             };
             var query = "INSERT INTO webserver(name, arn) VALUES(@Name, @Arn);" +
                         "select LAST_INSERT_ID()";
-            _connection.Open();
             var id = _connection.ExecuteScalar<int>(query, webServerToInsert);
             return id;
         }
