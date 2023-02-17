@@ -14,7 +14,8 @@ namespace DapperMigration.BackgroundService
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Do your startup work here
-            _migrationService.SeedDatabase();
+            _migrationService.CreateDatabase();
+            _migrationService.ApplyMigrations();
             return Task.CompletedTask;
         }
 
